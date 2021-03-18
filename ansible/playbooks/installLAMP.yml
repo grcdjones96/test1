@@ -1,0 +1,70 @@
+# installLAMP.yml
+
+---
+- hosts: linux
+  tasks:
+  - name: Create user (egoad/RubberDuck!)
+    become: yes
+    tags: setup    
+    user:
+      name: egoad
+      password: RubberDuck!		# this password will not work
+  - name: Create second user (ddevito/GetShorty!)
+    become: yes   # looks better here
+    tags: setup
+    user: 
+      name: ddevito
+      password: "{{ 'GetShorty!' | password_hash('sha512') }}"
+  - name: Create another user (webAdmin/encrypted password) 
+    become: yes
+    tags: setup
+    user: 
+      name: webAdmin
+# go back to ansible and create the password
+      password: 'dfkdjdjkjsdfj32539039djkd&%(#@(*$()@0@(klad'
+- hosts: db
+  tasks:
+  - name: Install MariaDB
+    become: yes
+    tags: setup
+    apt:
+      name: mariadb-server
+      state: present
+  - name: Enable mariaDB (set to autostart)
+    become: yes
+    tags: setup
+    service:
+      name: mariadb
+      enabled: yes
+  - name: Enable mariaDB (set to start)
+    become: yes
+    tags: setup
+    service:
+      name: mariadb
+      state: started
+- hosts: web
+  tasks: 
+  - name: Install Apache
+    become: yes
+    tags: setup
+    apt: name=apache2 state=present
+  - name: Set apache to run
+    become: yes
+    tags: setup
+    service: name=apache2 state=started enabled=yes
+  - name: Configure firewall to open http
+    become: yes
+    tags: setup
+    ufw:
+      rule: allow
+      port: '80'
+      proto: tcp 
+    notify:
+      - restart-firewall
+  handlers:
+  - name: restart-firewall
+    become: yes
+    ufw:
+      state: reloaded
+      
+#$ ansible-playbook -i inventory.txt playbooks/installLAMPS.yml --tags setup 

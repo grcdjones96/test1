@@ -1,0 +1,19 @@
+---
+- hosts: web1
+  tasks: 
+  - name: Report facts
+    debug:
+      var: ansible_facts
+  
+- hosts: web
+  gather_facts: false 
+  tasks:
+  - name: copy files to web servers
+    become: yes
+    copy:
+      src: /home/justincase/it385/website/
+      dest: /var/www/html
+      owner: root
+      group: root
+      mode: 0644   # or u=rw,g=r,o=r 
+      

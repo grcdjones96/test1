@@ -1,0 +1,12 @@
+---
+- hosts: web
+  tasks:
+  - name: copy files to web servers
+    become: yes
+    copy:
+      src: /home/justincase/it385/space/
+      dest: /var/www/html/
+      owner: root
+      group: root
+      mode: 0644   # or u=rw,g=r,o=r 
+      

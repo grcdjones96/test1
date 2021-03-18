@@ -1,0 +1,39 @@
+---
+- hosts: linux
+  tasks:
+  - name: Delete user (mshannon/SuperStar!)
+    become: yes   # looks better here
+    tags: remove
+    user: 
+      name: mshannon
+      state: absent
+- hosts: db
+  tasks:
+  - name: Remove MariaDB
+    become: yes
+    tags: remove
+    apt:
+      name: mariadb-server
+      state: absent  
+- hosts: web
+  tasks: 
+  - name: Remove Apache
+    become: yes
+    tags: remove
+    apt: name=apache2 state=absent
+  - name: Deny firewall to open http
+    become: yes
+    tags: remove
+    ufw:
+      rule: deny
+      port: '80'
+      proto: tcp 
+    notify:
+      - restart-firewall
+  handlers:
+  - name: restart-firewall
+    become: yes
+    ufw:
+      state: reloaded
+
+#$ ansible-playbook -i inventory.txt playbooks/removeLampWeb.yml --tags remove

@@ -1,0 +1,21 @@
+# createFiles.yml 
+
+---
+- hosts: web
+  tasks:
+  - name: Make folder in tmp directory
+    file:
+      dest: /tmp/ans 
+      state: directory
+  - name: 
+    file:
+      dest: /tmp/ans/webserverfile-file
+      state: '{{file_state}}'
+ 
+# ansible-playbook -i inventory.txt playbooks/CreateFiles.yml
+# ls /tmp/ans
+# ansible-playbook -i inventory.txt playbooks/CreateFiles.yml
+# ansible-playbook -i inventory.txt playbooks/CreateFiles.yml -e "file_state=absent"
+# ls /tmp/ans
+# ansible-playbook -i inventory.txt playbooks/CreateFiles.yml -e "file_state=touch"
+# ls /tmp/ans
