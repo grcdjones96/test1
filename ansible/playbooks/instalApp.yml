@@ -1,0 +1,19 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Create User
+      user: name=edgoad password=RubberDuck! 
+
+- hosts: web
+  sudo: yes
+  tasks:
+    - name: install apache2
+      apt: name=apache2 update_cache=yes state=latest
+
+- hosts: db
+  sudo: yes
+  tasks:
+    - name: install mysql-server
+      apt: name=mysql-server update_cache=yes state=latest
+
